@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=961cdf8f_002Ddf44_002D4de0_002Da48e_002D661983d9fd0f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="OpenRouterClientTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::B2FDBF92-BF56-459D-8482-E5C1AEC199BF::net9.0::_10xDevs_CodeReviewChecklistGenerator.Tests.OpenRouterClientTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d3575ae6_002Dd665_002D4ca2_002D8d7f_002D5b38996b5856/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="OpenRouterClientTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::B2FDBF92-BF56-459D-8482-E5C1AEC199BF::net9.0::_10xDevs_CodeReviewChecklistGenerator.Tests.OpenRouterClientTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
