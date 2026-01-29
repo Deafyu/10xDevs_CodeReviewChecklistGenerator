@@ -19,3 +19,36 @@ jobs:
         run: dotnet restore 10xDevs_CodeReviewChecklistGenerator.sln
       - name: Build
         run: dotnet build 10xDevs_CodeReviewChecklistGenerator.sln --configuration Release --no-restore
+      - name: Test (xUnit)
+        shell: pwsh
+        run: |
+          $testProjects = Get-ChildItem -Recurse -Filter "*Test*.csproj" |
+            Where-Object { $_.Name -match 'Test' }
+          if (-not $testProjects) {
+            Write-Host "No test projects found. Skipping dotnet test."
+            exit 0
+          }
+          New-Item -ItemType Directory -Path TestResults -Force | Out-Null
+          foreach ($proj in $testProjects) {
+            $name = $proj.BaseName
+            dotnet test $proj.FullName --configuration Release --no-build `
+              --logger "trx;LogFileName=$name.trx" --results-directory TestResults
+          }
+
+  cd:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - name: Publish
+        run: dotnet publish 10xDevs_CodeReviewChecklistGenerator/10xDevs_CodeReviewChecklistGenerator.csproj --configuration Release --output publish
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-publish
+          path: publish
