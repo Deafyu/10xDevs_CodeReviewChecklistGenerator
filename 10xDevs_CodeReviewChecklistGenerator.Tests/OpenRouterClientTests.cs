@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using _10xDevs_CodeReviewChecklistGenerator.OpenRouter;
 using _10xDevs_CodeReviewChecklistGenerator.OpenRouter.Models;
+using _10xDevs_CodeReviewChecklistGenerator.Services;
 
 namespace _10xDevs_CodeReviewChecklistGenerator.Tests;
 

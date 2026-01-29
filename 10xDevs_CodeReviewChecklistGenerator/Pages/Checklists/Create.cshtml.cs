@@ -55,18 +55,26 @@ public class CreateModel : PageModel
                 .ToListAsync(ct);
         }
 
-        var generated = await _generator.GenerateAsync(
-            Input.CodeBefore,
-            Input.CodeAfter,
-            Input.ChangeDescription,
-            templateItems,
-            ct);
-
-        GeneratedItems = generated.Select((text, index) => new ChecklistItemInput
+        try
         {
-            Text = text,
-            SortOrder = index
-        }).ToList();
+            var generated = await _generator.GenerateAsync(
+                Input.CodeBefore,
+                Input.CodeAfter,
+                Input.ChangeDescription,
+                templateItems,
+                ct);
+
+            GeneratedItems = generated.Select((text, index) => new ChecklistItemInput
+            {
+                Text = text,
+                SortOrder = index
+            }).ToList();
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty,
+                $"AI generation failed: {ex.Message}. Check OpenRouter privacy settings or update the model.");
+        }
 
         return Page();
     }

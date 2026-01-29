@@ -152,10 +152,8 @@ public sealed class OpenRouterClient : IOpenRouterClient
     {
         using var message = new HttpRequestMessage(
             HttpMethod.Post,
-            new Uri(new Uri(_options.BaseUrl), "chat/completions"))
-        {
-            Content = JsonContent.Create(request, options: JsonOptions)
-        };
+            new Uri(new Uri(_options.BaseUrl), "chat/completions"));
+        message.Content = JsonContent.Create(request, options: JsonOptions);
 
         if (!string.IsNullOrWhiteSpace(_options.ApiKey))
         {

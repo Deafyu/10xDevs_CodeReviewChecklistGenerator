@@ -52,8 +52,4 @@ Template items to include or expand:
             .ToList();
     }
 
-    private sealed class ChecklistAiResponse
-    {
-        public List<string> Items { get; init; } = [];
-    }
 }

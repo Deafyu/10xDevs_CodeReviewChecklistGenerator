@@ -356,3 +356,5 @@ api.MapDelete("/templates/{id:guid}", async (Guid id, ApplicationDbContext db, C
 });
 
 app.Run();
+
+public partial class Program { }
