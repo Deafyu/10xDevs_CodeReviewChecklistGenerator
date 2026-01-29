@@ -1,0 +1,67 @@
+@page
+@model _10xDevs_CodeReviewChecklistGenerator.Pages.Checklists.SingleModel
+@{
+    ViewData["Title"] = "Single Code Review";
+}
+
+<h1 class="h3">Single Code Review</h1>
+
+<form method="post" class="mb-4">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.Title"></label>
+        <input class="form-control" asp-for="Input.Title" />
+        <span asp-validation-for="Input.Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.TemplateId">Template</label>
+        <select class="form-select" asp-for="Input.TemplateId" asp-items="Model.TemplateOptions">
+            <option value="">None</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <a class="btn btn-outline-secondary" asp-page="/Checklists/Create">Switch to compare mode</a>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.CodeOnly"></label>
+        <textarea class="form-control" asp-for="Input.CodeOnly" rows="10"></textarea>
+        <span asp-validation-for="Input.CodeOnly" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.ChangeDescription"></label>
+        <textarea class="form-control" asp-for="Input.ChangeDescription" rows="4"></textarea>
+        <span asp-validation-for="Input.ChangeDescription" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary" asp-page-handler="Generate">Generate checklist</button>
+</form>
+
+@if (Model.GeneratedItems.Count > 0)
+{
+    <form method="post">
+        <input type="hidden" asp-for="Input.Title" />
+        <input type="hidden" asp-for="Input.TemplateId" />
+        <input type="hidden" asp-for="Input.CodeOnly" />
+        <input type="hidden" asp-for="Input.ChangeDescription" />
+
+        <h2 class="h5">Generated checklist</h2>
+        <div class="list-group mb-3">
+            @for (var i = 0; i < Model.GeneratedItems.Count; i++)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex align-items-start gap-2">
+                        <input class="form-check-input mt-1" asp-for="GeneratedItems[i].IsChecked" />
+                        <input class="form-control" asp-for="GeneratedItems[i].Text" />
+                        <input type="hidden" asp-for="GeneratedItems[i].SortOrder" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-success" asp-page-handler="Save">Save checklist</button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
