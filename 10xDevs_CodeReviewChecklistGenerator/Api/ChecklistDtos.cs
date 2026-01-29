@@ -4,8 +4,10 @@ public sealed class ChecklistGenerateRequest
 {
     public string CodeBefore { get; init; } = string.Empty;
     public string CodeAfter { get; init; } = string.Empty;
+    public string CodeOnly { get; init; } = string.Empty;
     public string ChangeDescription { get; init; } = string.Empty;
     public Guid? TemplateId { get; init; }
+    public string Mode { get; init; } = "compare";
 }
 
 public sealed class ChecklistGenerateResponse
@@ -18,7 +20,9 @@ public sealed class ChecklistCreateRequest
     public string Title { get; init; } = string.Empty;
     public string CodeBefore { get; init; } = string.Empty;
     public string CodeAfter { get; init; } = string.Empty;
+    public string CodeOnly { get; init; } = string.Empty;
     public string ChangeDescription { get; init; } = string.Empty;
+    public string Mode { get; init; } = "compare";
     public List<ChecklistItemDto> Items { get; init; } = [];
 }
 

@@ -122,11 +122,16 @@ api.MapPost("/checklists/generate", async (
             .ToListAsync(ct);
     }
 
+    var compareMode = request.Mode != "single";
+    var codeBefore = compareMode ? request.CodeBefore : string.Empty;
+    var codeAfter = compareMode ? request.CodeAfter : request.CodeOnly;
+
     var items = await generator.GenerateAsync(
-        request.CodeBefore,
-        request.CodeAfter,
+        codeBefore,
+        codeAfter,
         request.ChangeDescription,
         templateItems,
+        compareMode,
         ct);
 
     return Results.Ok(new ChecklistGenerateResponse { Items = items.ToList() });
@@ -142,12 +147,16 @@ api.MapPost("/checklists", async (
     if (string.IsNullOrEmpty(userId))
         return Results.Unauthorized();
 
+    var compareMode = request.Mode != "single";
+    var codeBefore = compareMode ? request.CodeBefore : string.Empty;
+    var codeAfter = compareMode ? request.CodeAfter : request.CodeOnly;
+
     var checklist = new Checklist
     {
         UserId = userId,
         Title = request.Title,
-        CodeBefore = request.CodeBefore,
-        CodeAfter = request.CodeAfter,
+        CodeBefore = codeBefore,
+        CodeAfter = codeAfter,
         ChangeDescription = request.ChangeDescription,
         Items = request.Items.Select((item, index) => new ChecklistItem
         {
@@ -174,6 +183,10 @@ api.MapPut("/checklists/{id:guid}", async (
     if (string.IsNullOrEmpty(userId))
         return Results.Unauthorized();
 
+    var compareMode = request.Mode != "single";
+    var codeBefore = compareMode ? request.CodeBefore : string.Empty;
+    var codeAfter = compareMode ? request.CodeAfter : request.CodeOnly;
+
     var checklist = await db.Checklists
         .Include(c => c.Items)
         .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId, ct);
@@ -182,8 +195,8 @@ api.MapPut("/checklists/{id:guid}", async (
         return Results.NotFound();
 
     checklist.Title = request.Title;
-    checklist.CodeBefore = request.CodeBefore;
-    checklist.CodeAfter = request.CodeAfter;
+    checklist.CodeBefore = codeBefore;
+    checklist.CodeAfter = codeAfter;
     checklist.ChangeDescription = request.ChangeDescription;
     checklist.UpdatedAt = DateTimeOffset.UtcNow;
 

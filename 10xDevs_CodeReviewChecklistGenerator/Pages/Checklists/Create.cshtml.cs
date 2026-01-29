@@ -39,10 +39,9 @@ public class CreateModel : PageModel
     public async Task<IActionResult> OnPostGenerateAsync(CancellationToken ct)
     {
         await LoadTemplatesAsync(ct);
+        ValidateInputs();
         if (!ModelState.IsValid)
-        {
             return Page();
-        }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         var templateItems = new List<string>();
@@ -57,11 +56,16 @@ public class CreateModel : PageModel
 
         try
         {
+            var compareMode = Input.Mode != "single";
+            var codeBefore = compareMode ? Input.CodeBefore : string.Empty;
+            var codeAfter = compareMode ? Input.CodeAfter : Input.CodeOnly;
+
             var generated = await _generator.GenerateAsync(
-                Input.CodeBefore,
-                Input.CodeAfter,
+                codeBefore,
+                codeAfter,
                 Input.ChangeDescription,
                 templateItems,
+                compareMode,
                 ct);
 
             GeneratedItems = generated.Select((text, index) => new ChecklistItemInput
@@ -82,18 +86,21 @@ public class CreateModel : PageModel
     public async Task<IActionResult> OnPostSaveAsync(CancellationToken ct)
     {
         await LoadTemplatesAsync(ct);
+        ValidateInputs();
         if (!ModelState.IsValid)
-        {
             return Page();
-        }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        var compareMode = Input.Mode != "single";
+        var codeBefore = compareMode ? Input.CodeBefore : string.Empty;
+        var codeAfter = compareMode ? Input.CodeAfter : Input.CodeOnly;
+
         var checklist = new Checklist
         {
             UserId = userId,
             Title = Input.Title,
-            CodeBefore = Input.CodeBefore,
-            CodeAfter = Input.CodeAfter,
+            CodeBefore = codeBefore,
+            CodeAfter = codeAfter,
             ChangeDescription = Input.ChangeDescription,
             Items = GeneratedItems.Select((item, index) => new ChecklistItem
             {
@@ -124,19 +131,21 @@ public class CreateModel : PageModel
         [Required]
         public string Title { get; set; } = string.Empty;
 
+        public string Mode { get; set; } = "compare";
+
         public Guid? TemplateId { get; set; }
 
-        [Required]
         [Display(Name = "Code before")]
         public string CodeBefore { get; set; } = string.Empty;
 
-        [Required]
         [Display(Name = "Code after")]
         public string CodeAfter { get; set; } = string.Empty;
 
-        [Required]
         [Display(Name = "Change description")]
         public string ChangeDescription { get; set; } = string.Empty;
+
+        [Display(Name = "Code to review")]
+        public string CodeOnly { get; set; } = string.Empty;
     }
 
     public sealed class ChecklistItemInput
@@ -144,5 +153,38 @@ public class CreateModel : PageModel
         public string Text { get; set; } = string.Empty;
         public bool IsChecked { get; set; }
         public int SortOrder { get; set; }
+    }
+
+    private void ValidateInputs()
+    {
+        if (string.IsNullOrWhiteSpace(Input.Title))
+        {
+            ModelState.AddModelError(nameof(Input.Title), "Title is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(Input.ChangeDescription))
+        {
+            ModelState.AddModelError(nameof(Input.ChangeDescription), "Change description is required.");
+        }
+
+        if (Input.Mode == "single")
+        {
+            if (string.IsNullOrWhiteSpace(Input.CodeOnly))
+            {
+                ModelState.AddModelError(nameof(Input.CodeOnly), "Code to review is required.");
+            }
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(Input.CodeBefore))
+            {
+                ModelState.AddModelError(nameof(Input.CodeBefore), "Code before is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Input.CodeAfter))
+            {
+                ModelState.AddModelError(nameof(Input.CodeAfter), "Code after is required.");
+            }
+        }
     }
 }
