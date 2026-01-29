@@ -42,7 +42,7 @@ public sealed class OpenRouterClient : IOpenRouterClient
         CancellationToken ct = default)
     {
         var request = BuildRequest(prompt, systemPrompt, includeResponseFormat: false);
-        var response = await SendAsync(request, ct);
+        var response = await SendWithFallbackAsync(request, ct);
 
         var result = await response.Content
             .ReadFromJsonAsync<ChatCompletionResponse>(JsonOptions, ct);
@@ -57,7 +57,7 @@ public sealed class OpenRouterClient : IOpenRouterClient
         CancellationToken ct = default) where T : class
     {
         var request = BuildRequest(prompt, systemPrompt, includeResponseFormat: true);
-        var response = await SendAsync(request, ct);
+        var response = await SendWithFallbackAsync(request, ct);
 
         var result = await response.Content
             .ReadFromJsonAsync<ChatCompletionResponse>(JsonOptions, ct);
@@ -101,7 +101,52 @@ public sealed class OpenRouterClient : IOpenRouterClient
         };
     }
 
-    private async Task<HttpResponseMessage> SendAsync(
+    private async Task<HttpResponseMessage> SendWithFallbackAsync(
+        ChatCompletionRequest request,
+        CancellationToken ct)
+    {
+        var models = new List<string> { request.Model };
+        if (_options.FallbackModels is { Length: > 0 })
+        {
+            models.AddRange(_options.FallbackModels.Where(model =>
+                !string.IsNullOrWhiteSpace(model) &&
+                !string.Equals(model, request.Model, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        HttpResponseMessage? lastResponse = null;
+
+        foreach (var model in models)
+        {
+            var attempt = request with { Model = model };
+            var response = await SendOnceAsync(attempt, ct);
+            if (response.IsSuccessStatusCode)
+            {
+                return response;
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("OpenRouter model not found: {Model}. Trying fallback.", model);
+                lastResponse = response;
+                continue;
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogError("OpenRouter request failed. Status: {StatusCode}, Body: {Body}", response.StatusCode, body);
+            response.EnsureSuccessStatusCode();
+        }
+
+        if (lastResponse is not null)
+        {
+            var body = await lastResponse.Content.ReadAsStringAsync(ct);
+            _logger.LogError("OpenRouter request failed after fallbacks. Status: {StatusCode}, Body: {Body}", lastResponse.StatusCode, body);
+            lastResponse.EnsureSuccessStatusCode();
+        }
+
+        throw new InvalidOperationException("OpenRouter request failed and no fallback succeeded.");
+    }
+
+    private async Task<HttpResponseMessage> SendOnceAsync(
         ChatCompletionRequest request,
         CancellationToken ct)
     {
@@ -127,14 +172,6 @@ public sealed class OpenRouterClient : IOpenRouterClient
             message.Headers.Add("X-Title", _options.Title);
         }
 
-        var response = await _httpClient.SendAsync(message, ct);
-        if (!response.IsSuccessStatusCode)
-        {
-            var body = await response.Content.ReadAsStringAsync(ct);
-            _logger.LogError("OpenRouter request failed. Status: {StatusCode}, Body: {Body}", response.StatusCode, body);
-        }
-
-        response.EnsureSuccessStatusCode();
-        return response;
+        return await _httpClient.SendAsync(message, ct);
     }
 }

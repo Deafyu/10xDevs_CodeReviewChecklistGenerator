@@ -10,6 +10,12 @@ public sealed class OpenRouterOptions
 
     public string DefaultModel { get; init; } = "google/gemini-2.0-flash-exp:free";
 
+    public string[] FallbackModels { get; init; } =
+    [
+        "deepseek/deepseek-chat-v3.1:free",
+        "openai/gpt-oss-20b:free"
+    ];
+
     public int? MaxTokens { get; init; } = 1000;
 
     public double? Temperature { get; init; } = 0.7;

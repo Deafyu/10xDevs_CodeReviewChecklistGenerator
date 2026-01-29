@@ -1,5 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Sora:wght@500;700&display=swap");
+
+:root {
+  --app-bg: #f6f3ee;
+  --app-surface: #ffffff;
+  --app-ink: #1b1b1f;
+  --app-muted: #5c5c66;
+  --app-primary: #0f6d6d;
+  --app-primary-strong: #0b4f4f;
+  --app-accent: #f2a450;
+  --app-border: #e6e0d7;
+  --app-shadow: 0 12px 30px rgba(28, 24, 20, 0.12);
+  --app-radius: 18px;
+}
+
 html {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 @media (min-width: 768px) {
@@ -8,24 +23,153 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 80px;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at top right, rgba(242, 164, 80, 0.2), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(15, 109, 109, 0.15), transparent 40%),
+    var(--app-bg);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  background: rgba(246, 243, 238, 0.9);
+  border-bottom: 1px solid rgba(230, 224, 215, 0.7);
+}
+
+.navbar {
+  padding: 1.25rem 0;
+}
+
+.navbar-brand {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--app-ink);
+}
+
+.navbar .nav-link {
+  color: var(--app-muted);
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: var(--app-ink);
+  background: rgba(15, 109, 109, 0.08);
+}
+
+.app-content {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.btn {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.55rem 1.2rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--app-primary), var(--app-primary-strong));
+  border: none;
+  box-shadow: 0 12px 20px rgba(15, 109, 109, 0.2);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: linear-gradient(135deg, #128080, var(--app-primary-strong));
+}
+
+.btn-outline-secondary {
+  border-color: var(--app-border);
+  color: var(--app-muted);
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(15, 109, 109, 0.08);
+  color: var(--app-ink);
+}
+
+.btn-outline-primary {
+  border-color: var(--app-primary);
+  color: var(--app-primary);
+}
+
+.btn-outline-primary:hover {
+  background: rgba(15, 109, 109, 0.12);
+  color: var(--app-primary-strong);
+}
+
+.form-control,
+.form-select {
+  border-radius: 14px;
+  border: 1px solid var(--app-border);
+  background: #fffefb;
+  box-shadow: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 0.2rem rgba(15, 109, 109, 0.2);
+}
+
+.list-group-item {
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  margin-bottom: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--app-surface);
+}
+
+.list-group {
+  gap: 1rem;
+}
+
+.alert {
+  border-radius: var(--app-radius);
+  border: 1px dashed var(--app-border);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--app-muted);
+}
+
+.footer {
+  margin-top: auto;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--app-border);
+  background: rgba(246, 243, 238, 0.95);
+}
+
+.form-check-input:checked {
+  background-color: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(15, 109, 109, 0.2);
 }
