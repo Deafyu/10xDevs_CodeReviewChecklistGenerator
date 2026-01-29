@@ -43,7 +43,7 @@ jobs:
           New-Item -ItemType Directory -Path TestResults -Force | Out-Null
           foreach ($proj in $testProjects) {
             $name = $proj.BaseName
-            dotnet test $proj.FullName --configuration Release --no-build `
+            dotnet test $proj.FullName --configuration Release `
               --logger "trx;LogFileName=$name.trx" --results-directory TestResults
           }
 
